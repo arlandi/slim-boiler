@@ -1,19 +1,19 @@
 {
-    "name": "shameerc/textpress",
+    "name": "arlandi/slim-starter",
     "type": "application",
-    "keywords": ["blog","flatfile","markdown"],
+    "keywords": ["app","flatfile"],
     "license": "MIT",
-    "version": "2.0.1",
-    "description": "A flat-file blog engine for PHP",
-    "homepage": "http://textpress.shameerc.com",
+    "version": "1.0.0",
+    "description": "A flat-file engine for PHP",
+    "homepage": "http://anggiarlandi.com",
     "authors": [{
-            "name": "Shameer C",
-            "homepage": "http://blog.shameerc.com"
+            "name": "Anggi",
+            "homepage": "http://anggiarlandi.com"
         }],
     "require": {
         "php": ">=5.3.3",
         "michelf/php-markdown" : "1.4.*",
-        "slim/slim": "2.4.*"
+        "slim/slim": "2.*"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*"
@@ -22,7 +22,6 @@
         "psr-0": {
             "Textpress" : "src/shameerc"
         }
-
     },
     "scripts": {
         "run": [

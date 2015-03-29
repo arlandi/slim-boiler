@@ -1,9 +1,9 @@
 <?php
  /**
  * Textpress - PHP Flat file blog engine
- * Textpress is a flat file blog engine, built on top of Slim inspired from Toto. 
+ * Textpress is a flat file blog engine, built on top of Slim inspired from Toto.
  * Now it have only a limited set of features and url options.
- * 
+ *
  * @author      Shameer C <me@shameerc.com>
  * @copyright   2012 - Shameer C
  * @version     2.0.0
@@ -29,16 +29,16 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
- 
+
 namespace Textpress;
 /**
 * Textpress
 * @author       Shameer
-* @since        1.0 
+* @since        1.0
 */
 class Textpress
 {
-    
+
     /**
     * TextPress configuration
     *
@@ -52,14 +52,14 @@ class Textpress
     * @var array
     */
     public $fileNames = array();
-    
+
     /**
     * Articles
     *
-    * @var array 
+    * @var array
     */
     public $allArticles = array();
-    
+
     /**
     * View data
     *
@@ -105,7 +105,7 @@ class Textpress
 
     /**
     * Constructor
-    * 
+    *
     * @param Slim $slim Object of slim
     */
     public function __construct(\Slim\Slim $slim, $config)
@@ -136,7 +136,7 @@ class Textpress
     */
     public function getConfig($configVar)
     {
-        return isset($this->config[$configVar]) 
+        return isset($this->config[$configVar])
                 ? $this->config[$configVar]
                 : null ;
     }
@@ -146,10 +146,7 @@ class Textpress
     */
     public function init()
     {
-        if(!is_dir($this->getConfig('article.path'))){
-            throw new \Exception('Article location is invalid');
-        }
-        $this->themeBase = $this->getConfig('themes.path') . "/" . $this->getConfig("active.theme");
+        $this->themeBase = './templates';
         $this->slim->view()->setTemplatesDirectory($this->themeBase);
         $this->setViewConfig();
         $this->setRoutes();
@@ -163,7 +160,7 @@ class Textpress
         if (empty($this->fileNames))
         {
             $iterator = new \DirectoryIterator($this->getConfig('article.path'));
-            $files = new \RegexIterator($iterator,'/\\'.$this->getConfig('file.extension').'$/'); 
+            $files = new \RegexIterator($iterator,'/\\'.$this->getConfig('file.extension').'$/');
             foreach($files as $file){
                 if($file->isFile()){
                     $this->fileNames[] = $file->getFilename();
@@ -188,72 +185,6 @@ class Textpress
     }
 
     /**
-    * Loads an article
-    *
-    * @param string $fileName Name of article file
-    * @param bool $isArticle For requests to article it should 
-    *                        merge meta data to global data
-    * @return array 
-    */
-    public function loadArticle($fileName)
-    {
-        if(!($articlePath = $this->getArticlePath($fileName))){
-            return false;
-        }
-        $handle     = fopen($articlePath, 'r');
-        $content    = stream_get_contents($handle);
-        // Don't allow out-of-control blank lines
-        $content    = preg_replace("/" . PHP_EOL. "{2,}/", PHP_EOL . PHP_EOL, $content);
-        $sections   = explode( PHP_EOL . PHP_EOL, $content);
-        $meta       = json_decode(array_shift($sections), true);
-        $contents   = implode( PHP_EOL . PHP_EOL, $sections);
-        if($this->getConfig('markdown')){ 
-            $contents = \Michelf\MarkdownExtra::defaultTransform($contents);
-        }
-        $slug = (array_key_exists('slug', $meta) && $meta['slug'] !='') 
-                    ? $meta['slug']
-                    : $this->slugize($meta['title']);
-        $url = $this->getArticleUrl($meta['date'], $slug);
-        $meta['category'] = $this->collectCategories($meta);
-        $meta['tag'] = $this->collectTags($meta);
-        $meta['url'] = $this->getUrl() . $url;
-        $meta['path'] = $url;
-        return new Article($meta, $contents);
-    }
-
-    /**
-    * Loads all article
-    *
-    * @return array Articles
-    */
-    public function loadArticles($numbers = -1)
-    {
-        $filenames = $this->getfileNames();
-        $i = 0;
-        $allArticles = array();
-        foreach($filenames as $filename){
-            if ($numbers > -1 && $i == $numbers) {
-                break;
-            }
-            $article = $this->loadArticle($filename);
-            $slug = $article->getMeta('slug') 
-                        ? $article->getMeta('slug') 
-                        : $this->slugize($article->getTitle());
-            $path = $article->getPath();
-            $allArticles[$path] = $article;
-            $i++;
-        }
-        $this->allArticles = $allArticles;
-        $this->slim->view()->appendGlobalData(
-            array(
-                "categories" => $this->categories,
-                "tags" => $this->tags
-            )
-        );
-        return $this->viewData['articles'] = $this->sortArticles($allArticles);
-    }
-
-    /**
     * Sort articles based on date
     *
     * @param array $articles Array of articles
@@ -273,9 +204,9 @@ class Textpress
 
     /**
     * Filter list of articles based on the meta key-value
-    * Mainly used in categories and tags, but you can extend for other custom 
+    * Mainly used in categories and tags, but you can extend for other custom
     * meta keys also. Just add the routes and update routing function to include those routes
-    * 
+    *
     * @param String $filter meta key to be searched in articles
     * @param string $value value to be mached with
     * @return array list of article matching the criteria
@@ -283,7 +214,7 @@ class Textpress
     public function filterArticles($filter,$value){
         $articles = array();
         foreach ($this->allArticles as $path => $article) {
-            if ( $article->getMeta($filter) 
+            if ( $article->getMeta($filter)
                 && array_key_exists($value, $article->getMeta($filter)))
                 $articles[$path] = $article;
         }
@@ -301,7 +232,7 @@ class Textpress
             $this->notFound();
         }
         $article = $this->allArticles[$path];
-        $this->slim->view()->appendGlobalData($article->getMeta()); 
+        $this->slim->view()->appendGlobalData($article->getMeta());
         return $this->viewData['article'] = $article;
     }
 
@@ -334,7 +265,7 @@ class Textpress
     *
     * @param  Date $date from arguments passed via rout
     * @param  String $format Date format
-    * @return array archives 
+    * @return array archives
     */
     public function setArchives($date=null,$format='')
     {
@@ -388,7 +319,7 @@ class Textpress
     public function setRoutes()
     {
         $this->_routes = $this->getConfig('routes');
-        $self = $this; 
+        $self = $this;
         $prefix = $this->getConfig('prefix');
         foreach ($this->_routes as $key => $value) {
             $this->slim->map($prefix . $value['route'], function() use($self, $key, $value){
@@ -472,7 +403,7 @@ class Textpress
     * Constructs file name from route params
     *
     * @param $params Array route parameters
-    * @return String file name 
+    * @return String file name
     */
     public function getPath($params)
     {
@@ -511,7 +442,7 @@ class Textpress
     public function slugize($str)
     {
         $str = strtolower(trim($str));
-        
+
         $chars = array("ä", "ö", "ü", "ß");
         $replacements = array("ae", "oe", "ue", "ss");
         $str = str_replace($chars, $replacements, $str);
@@ -522,10 +453,10 @@ class Textpress
 
         $pattern = array(":", "!", "?", ".", "/", "'");
         $str = str_replace($pattern, "", $str);
-        
+
         $pattern = array("/[^a-z0-9-]/", "/-+/");
         $str = preg_replace($pattern, "-", $str);
-        
+
         return $str;
     }
 
@@ -554,7 +485,7 @@ class Textpress
 
     /**
     * Collects categories from all articles
-    * 
+    *
     * @param string $meta Article meta data
     * @return array of distinct categories
     */
@@ -610,7 +541,7 @@ class Textpress
     {
         $format = is_null($format) ? $this->getConfig('date.format') : $format;
         $date  = new \DateTime($date);
-        return $date->format($format);  
+        return $date->format($format);
     }
 
     /**
@@ -618,7 +549,7 @@ class Textpress
     */
     public function getViewData($key = null)
     {
-        return is_null($key) 
+        return is_null($key)
                     ? $this->viewData
                     : ( isset($this->viewData[$key])
                         ? $this->viewData[$key]
@@ -651,7 +582,6 @@ class Textpress
     public function run()
     {
         $this->init();
-        $this->loadArticles();
         $this->slim->run();
     }
 }
