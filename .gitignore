@@ -1,2 +1,22 @@
 vendor
 cache/**
+
+# Docs
+/doc/
+/tags
+
+# OS
+*.bak
+.DS_Store
+
+# Package managers
+.bundle/
+bower_components/
+node_modules/
+/vendor/
+npm-debug.log
+
+# Temp folders -----------------------------------------------------------------
+.sass-cache
+/composer/
+/tmp/
