@@ -18,14 +18,8 @@ $config = require __DIR__ . '/config/config.php';
 * and set the configurations from config file
 */
 
-$app = new Slim\Slim(array('view' => new Textpress\View(),'mode' => 'production'));
+$slim = new Slim\Slim(array('view' => new SlimBoiler\View(),'mode' => 'production'));
 
-/**
-* Create an object of Textpress and pass the object of Slim to it.
-*/
-$textpress = new Textpress\Textpress($app, $config);
+$app = new SlimBoiler\App($slim, $config);
 
-/**
-* Finally run Textpress
-*/
-$textpress->run();
+$app->run();
