@@ -17,8 +17,7 @@ return array(
         // Site root
         '__root__'  => array(
             'route'     => '/',
-            'template'  =>'index',
-            'layout'    => 'layout_home'
+            'template'  =>'index'
         )
     ),
 );

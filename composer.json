@@ -18,8 +18,8 @@
         "phpunit/phpunit": "3.7.*"
     },
     "autoload": {
-        "psr-0": {
-            "SlimBoiler" : "src/arlandi"
+        "psr-4": {
+            "SlimBoiler\\" : "lib/"
         }
     },
     "scripts": {
